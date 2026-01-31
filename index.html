@@ -2,181 +2,360 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HTML & CSS Viewer</title>
+  <title>HTML & CSS Live Viewer</title>
+
+  <!-- JSZip -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg-main: #f5f5f5;
+      --bg-panel: #ffffff;
+      --bg-editor: #f8f9fa;
+      --text-main: #212529;
+      --border: #ddd;
+      --primary: #0d6efd;
+      --danger: #dc3545;
+      --success: #198754;
+    }
+
+    body.dark {
+      --bg-main: #121212;
+      --bg-panel: #1e1e1e;
+      --bg-editor: #1a1a1a;
+      --text-main: #e9ecef;
+      --border: #333;
+      --primary: #4dabf7;
+      --danger: #ff6b6b;
+      --success: #51cf66;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f5f5f5;
       height: 100vh;
       display: flex;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
     }
 
-    header {
-      background: #0d6efd;
-      color: white;
-      padding: 12px 20px;
-      font-size: 18px;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      flex: 1;
-    }
-
-    .editor {
-      padding: 10px;
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    textarea {
-      width: 100%;
-      height: 100%;
-      resize: none;
-      padding: 10px;
-      font-family: monospace;
+    .sidebar h2 {
       font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
+      opacity: 0.7;
+      text-transform: uppercase;
     }
 
-    /* Bigger scrollbar for HTML editor only */
-    .html-editor {
-      scrollbar-width: auto; /* Firefox */
-      scrollbar-color: #1f2329 #e9ecef;
-    }
-
-    .html-editor::-webkit-scrollbar {
-      width: 14px;
-    }
-
-    .html-editor::-webkit-scrollbar-track {
-      background: #e9ecef;
-      border-radius: 8px;
-    }
-
-    .html-editor::-webkit-scrollbar-thumb {
-      background-color: #0d6efd;
-      border-radius: 8px;
-      border: 3px solid #e9ecef;
-    }
-
-    .html-editor::-webkit-scrollbar-thumb:hover {
-      background-color: #084298;
-    }
-
-    button {
+    .menu-btn {
       padding: 10px;
       border: none;
-      background: #198754;
-      color: white;
       border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+    }
+
+    .primary { background: var(--primary); }
+    .danger  { background: var(--danger); }
+    .success { background: var(--success); }
+
+    .menu-btn:hover { opacity: 0.9; }
+
+    /* Main */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      font-weight: bold;
+    }
+
+    .container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Editors */
+    .editor {
+      background: var(--bg-editor);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-right: 1px solid var(--border);
+    }
+
+    .editor-block {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-panel);
+      min-height: 36px;
+    }
+
+    .editor-block.collapsed {
+      flex: 0 0 36px;
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: var(--bg-editor);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .editor-header button {
+      border: none;
+      background: none;
       cursor: pointer;
       font-size: 14px;
     }
 
-    button:hover {
-      background: #157347;
+    textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      border: none;
+      background: var(--bg-panel);
+      color: var(--text-main);
     }
 
-    .preview {
-      border-left: 2px solid #ddd;
-      background: white;
+    .editor-block.collapsed textarea {
+      display: none;
     }
 
-    iframe {
+    /* Preview */
+    .preview iframe {
       width: 100%;
       height: 100%;
       border: none;
-    }
-
-    h3 {
-      margin: 0;
+      background: white;
     }
 
     footer {
+      padding: 8px;
       text-align: center;
-      padding: 10px;
       font-size: 12px;
-      color: #6c757d;
-      background: #ffffff;
-      border-top: 1px solid #ddd;
+      opacity: 0.6;
+      border-top: 1px solid var(--border);
+      background: var(--bg-panel);
     }
   </style>
 </head>
 
 <body>
-  <header>HTML & CSS Live Viewer</header>
 
-  <div class="container">
-    <!-- Editors -->
-    <div class="editor">
-      <h3>HTML</h3>
-      <textarea id="htmlCode" class="html-editor">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Editor Tools</h2>
+
+    <button
+      class="menu-btn primary"
+      title="Collapse or expand all HTML tags in the editor"
+      onclick="toggleCodeCollapse()"
+    >⬍ Toggle Code Collapse</button>
+
+    <button
+      class="menu-btn primary"
+      title="Toggle dark and light mode"
+      onclick="toggleDarkMode()"
+    >🌙 Dark Mode</button>
+
+    <button
+      class="menu-btn success"
+      title="Download HTML and CSS as a ZIP file"
+      onclick="exportZip()"
+    >📦 Export ZIP</button>
+
+    <button
+      class="menu-btn danger"
+      title="Clear both HTML and CSS editors"
+      onclick="clearEditors()"
+    >🧹 Clear Editors</button>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header>HTML & CSS Live Viewer</header>
+
+    <div class="container">
+      <div class="editor">
+
+        <!-- HTML Editor -->
+        <div id="htmlBlock" class="editor-block">
+          <div class="editor-header">
+            <span>HTML</span>
+            <button
+              title="Collapse or expand HTML editor"
+              onclick="toggleTextarea('htmlBlock')"
+            >⬍</button>
+          </div>
+          <textarea id="htmlCode">
 <h1>Hello World</h1>
-<p>This is a preview</p>
-      </textarea>
+<h1>Another Heading</h1>
+<div>
+  <p>This is inside a div</p>
+</div>
+<section>
+  <h2>Section title</h2>
+  <p>More content</p>
+</section>
+          </textarea>
+        </div>
 
-      <h3>CSS</h3>
-      <textarea id="cssCode">
-body {
-  background: #f0f8ff;
-  font-family: Arial;
-}
+        <!-- CSS Editor -->
+        <div id="cssBlock" class="editor-block">
+          <div class="editor-header">
+            <span>CSS</span>
+            <button
+              title="Collapse or expand CSS editor"
+              onclick="toggleTextarea('cssBlock')"
+            >⬍</button>
+          </div>
+          <textarea id="cssCode">
+h1 { color: #0d6efd; }
+p  { font-size: 14px; }
+          </textarea>
+        </div>
 
-h1 {
-  color: #0d6efd;
-}
-      </textarea>
+      </div>
 
-      <button onclick="renderPreview()">Preview</button>
+      <!-- Preview -->
+      <div class="preview">
+        <iframe id="previewFrame"></iframe>
+      </div>
     </div>
 
-    <!-- Preview -->
-    <div class="preview">
-      <iframe id="previewFrame"></iframe>
-    </div>
+    <footer>
+      © <span id="year"></span> Trustesse. All rights reserved.
+    </footer>
   </div>
 
-  <footer>
-    © <span id="year"></span> Trustesse. All rights reserved.
-  </footer>
-
   <script>
+    const htmlEditor = document.getElementById("htmlCode");
+    const cssEditor  = document.getElementById("cssCode");
+    const iframe     = document.getElementById("previewFrame");
+
+    let originalHTML = htmlEditor.value;
+    let isCodeCollapsed = false;
+
     function renderPreview() {
-      const html = document.getElementById("htmlCode").value;
-      const css = document.getElementById("cssCode").value;
-
-      const iframe = document.getElementById("previewFrame");
       const doc = iframe.contentDocument || iframe.contentWindow.document;
-
       doc.open();
       doc.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <style>${css}</style>
-          </head>
-          <body>
-            ${html}
-          </body>
-        </html>
+<!DOCTYPE html>
+<html>
+<head>
+  <style>${cssEditor.value}</style>
+</head>
+<body>
+${originalHTML}
+</body>
+</html>
       `);
       doc.close();
     }
 
-    // Auto preview on load
-    renderPreview();
+    function toggleTextarea(id) {
+      document.getElementById(id).classList.toggle("collapsed");
+    }
 
-    // Auto update footer year
-    document.getElementById("year").textContent = new Date().getFullYear();
+    function toggleCodeCollapse() {
+      if (!isCodeCollapsed) {
+        originalHTML = htmlEditor.value;
+        htmlEditor.value = originalHTML.replace(
+          /<([a-zA-Z][a-zA-Z0-9-]*)(\s[^>]*)?>[\s\S]*?<\/\1>/g,
+          (_, tag) => `<${tag}>...</${tag}>`
+        );
+        isCodeCollapsed = true;
+      } else {
+        htmlEditor.value = originalHTML;
+        isCodeCollapsed = false;
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode",
+        document.body.classList.contains("dark"));
+    }
+
+    function clearEditors() {
+      if (!confirm("This will clear both HTML and CSS. Continue?")) return;
+      htmlEditor.value = "";
+      cssEditor.value = "";
+      originalHTML = "";
+      isCodeCollapsed = false;
+      renderPreview();
+    }
+
+    async function exportZip() {
+      const zip = new JSZip();
+      zip.file(
+        "index.html",
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Exported Project</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+${originalHTML}
+</body>
+</html>`
+      );
+      zip.file("styles.css", cssEditor.value);
+      const blob = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "html-css-project.zip";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark");
+    }
+
+    htmlEditor.addEventListener("input", () => {
+      if (!isCodeCollapsed) originalHTML = htmlEditor.value;
+      renderPreview();
+    });
+
+    cssEditor.addEventListener("input", renderPreview);
+
+    renderPreview();
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
   </script>
+
 </body>
 </html>
