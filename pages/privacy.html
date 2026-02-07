@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Privacy Policy | Trustesse</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg-main: #f5f5f5;
+      --bg-panel: #ffffff;
+      --text-main: #212529;
+      --border: #ddd;
+      --primary: #0d6efd;
+    }
+
+    body.dark {
+      --bg-main: #121212;
+      --bg-panel: #1e1e1e;
+      --text-main: #e9ecef;
+      --border: #333;
+      --primary: #4dabf7;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-size: 14px;
+    }
+
+    header nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    h2 {
+      margin-top: 28px;
+      font-size: 18px;
+    }
+
+    p {
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    ul {
+      padding-left: 18px;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 12px;
+      font-size: 12px;
+      text-align: center;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--primary);
+      margin: 0 6px;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <span>Trustesse – HTML & CSS Live Viewer</span>
+  <nav>
+    <a href="../index.html">Editor</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <div class="card">
+    <h1>Privacy Policy</h1>
+
+    <p>
+      This Privacy Policy describes how Trustesse ("we", "our", or "us") collects,
+      uses, and protects information when you use the HTML & CSS Live Viewer.
+    </p>
+
+    <h2>Information We Collect</h2>
+    <p>
+      We do not require users to create accounts or submit personal information.
+      However, certain non-personal information may be collected automatically,
+      such as browser type, device information, and usage statistics.
+    </p>
+
+    <h2>Cookies and Web Beacons</h2>
+    <p>
+      Trustesse uses cookies to improve user experience and serve relevant content.
+      Google AdSense, a third-party advertising service, uses cookies including
+      the DoubleClick cookie to display ads to users based on their visits to this
+      and other websites.
+    </p>
+
+    <p>
+      Users may opt out of personalized advertising by visiting Google’s Ads
+      Settings page.
+    </p>
+
+    <h2>Google AdSense</h2>
+    <p>
+      Google is a third-party vendor that uses cookies to serve ads on this site.
+      Google’s use of advertising cookies enables it and its partners to serve ads
+      based on users’ visits to this site and/or other sites on the internet.
+    </p>
+
+    <h2>Third-Party Privacy Policies</h2>
+    <p>
+      Trustesse’s Privacy Policy does not apply to other advertisers or websites.
+      We advise you to consult the respective Privacy Policies of these third-party
+      ad servers for more detailed information about their practices.
+    </p>
+
+    <h2>Children’s Information</h2>
+    <p>
+      Trustesse does not knowingly collect any Personal Identifiable Information
+      from children under the age of 13. If you believe that your child provided
+      such information on our website, please contact us immediately and we will
+      promptly remove such information from our records.
+    </p>
+
+    <h2>Your Consent</h2>
+    <p>
+      By using our website, you hereby consent to our Privacy Policy and agree to
+      its terms.
+    </p>
+
+    <h2>Updates</h2>
+    <p>
+      This Privacy Policy may be updated from time to time. Any changes will be
+      posted on this page.
+    </p>
+
+    <h2>Contact Us</h2>
+    <p>
+      If you have any questions about this Privacy Policy, you can contact us at:
+      <br />
+      📧 <strong>info@trustesse.com</strong>
+    </p>
+  </div>
+</main>
+
+<footer>
+  © <span id="year"></span> Trustesse |
+  <a href="about.html">About</a> |
+  <a href="privacy.html">Privacy Policy</a> |
+  <a href="contact.html">Contact</a>
+</footer>
+
+<script>
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
+
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+</script>
+
+</body>
+</html>

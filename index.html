@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HTML & CSS Live Viewer</title>
+	 <link rel="icon" href="favicon.ico">
+	<link rel="icon" type="image/png" sizes="12x12" href="logo.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+	<link rel="apple-touch-icon" href="logo-180.png">
 
-  <!-- JSZip -->
+<title>⌘ &lt;/&gt; HTML & CSS Live Viewer | Trustesse</title>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
@@ -85,6 +89,20 @@
       color: white;
       padding: 12px 20px;
       font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-size: 14px;
+    }
+
+    header nav a:hover {
+      text-decoration: underline;
     }
 
     .container {
@@ -111,7 +129,6 @@
       border-radius: 6px;
       overflow: hidden;
       background: var(--bg-panel);
-      min-height: 36px;
     }
 
     .editor-block.collapsed {
@@ -126,13 +143,6 @@
       font-size: 13px;
       background: var(--bg-editor);
       border-bottom: 1px solid var(--border);
-    }
-
-    .editor-header button {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 14px;
     }
 
     textarea {
@@ -160,12 +170,25 @@
     }
 
     footer {
-      padding: 8px;
-      text-align: center;
+      padding: 10px;
       font-size: 12px;
-      opacity: 0.6;
       border-top: 1px solid var(--border);
       background: var(--bg-panel);
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--primary);
+      margin: 0 8px;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .toggle-btn-warapper {
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
   </style>
 </head>
@@ -176,118 +199,89 @@
   <aside class="sidebar">
     <h2>Editor Tools</h2>
 
-    <button
-      class="menu-btn primary"
-      title="Collapse or expand all HTML tags in the editor"
-      onclick="toggleCodeCollapse()"
-    >⬍ Toggle Code Collapse</button>
-
-    <button
-      class="menu-btn primary"
-      title="Toggle dark and light mode"
-      onclick="toggleDarkMode()"
-    >🌙 Dark Mode</button>
-
-    <button
-      class="menu-btn success"
-      title="Download HTML and CSS as a ZIP file"
-      onclick="exportZip()"
-    >📦 Export ZIP</button>
-
-    <button
-      class="menu-btn danger"
-      title="Clear both HTML and CSS editors"
-      onclick="clearEditors()"
-    >🧹 Clear Editors</button>
+    <button class="menu-btn primary" onclick="toggleCodeCollapse()">⬍ Toggle Code Collapse</button>
+    <button class="menu-btn primary" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    <button class="menu-btn success" onclick="exportZip()">📦 Export ZIP</button>
+    <button class="menu-btn danger" onclick="clearEditors()">🧹 Clear Editors</button>
   </aside>
 
   <!-- Main -->
   <div class="main">
-    <header>HTML & CSS Live Viewer</header>
+    <header>
+      <span>HTML & CSS Live Viewer</span>
+      <nav>
+        <a href="pages/about.html">About</a>
+        <a href="pages/privacy.html">Privacy Policy</a>
+        <a href="pages/contact.html">Contact</a>
+      </nav>
+    </header>
 
     <div class="container">
       <div class="editor">
 
-        <!-- HTML Editor -->
         <div id="htmlBlock" class="editor-block">
           <div class="editor-header">
             <span>HTML</span>
-            <button
-              title="Collapse or expand HTML editor"
-              onclick="toggleTextarea('htmlBlock')"
-            >⬍</button>
+            <button class="toggle-btn-warapper"  onclick="toggleTextarea('htmlBlock')">⬍</button>
           </div>
           <textarea id="htmlCode">
 <h1>Hello World</h1>
-<h1>Another Heading</h1>
-<div>
-  <p>This is inside a div</p>
-</div>
-<section>
-  <h2>Section title</h2>
-  <p>More content</p>
-</section>
+<p>Edit HTML here</p>
           </textarea>
         </div>
 
-        <!-- CSS Editor -->
         <div id="cssBlock" class="editor-block">
           <div class="editor-header">
             <span>CSS</span>
-            <button
-              title="Collapse or expand CSS editor"
-              onclick="toggleTextarea('cssBlock')"
-            >⬍</button>
+            <button class="toggle-btn-warapper" onclick="toggleTextarea('cssBlock')">⬍</button>
           </div>
           <textarea id="cssCode">
 h1 { color: #0d6efd; }
-p  { font-size: 14px; }
           </textarea>
         </div>
 
       </div>
 
-      <!-- Preview -->
       <div class="preview">
         <iframe id="previewFrame"></iframe>
       </div>
     </div>
 
     <footer>
-      © <span id="year"></span> Trustesse. All rights reserved.
+      © <span id="year"></span> Trustesse |
+      <a href="about.html">About</a> |
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="contact.html">Contact</a>
     </footer>
   </div>
 
-  <script>
-    const htmlEditor = document.getElementById("htmlCode");
-    const cssEditor  = document.getElementById("cssCode");
-    const iframe     = document.getElementById("previewFrame");
+<script>
+  const htmlEditor = document.getElementById("htmlCode");
+  const cssEditor = document.getElementById("cssCode");
+  const iframe = document.getElementById("previewFrame");
 
-    let originalHTML = htmlEditor.value;
-    let isCodeCollapsed = false;
+  let originalHTML = htmlEditor.value;
+  let isCodeCollapsed = false;
 
-    function renderPreview() {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      doc.open();
-      doc.write(`
+  function renderPreview() {
+    const doc = iframe.contentDocument;
+    doc.open();
+    doc.write(`
 <!DOCTYPE html>
 <html>
 <head>
-  <style>${cssEditor.value}</style>
+<style>${cssEditor.value}</style>
 </head>
-<body>
-${originalHTML}
-</body>
-</html>
-      `);
-      doc.close();
-    }
+<body>${originalHTML}</body>
+</html>`);
+    doc.close();
+  }
 
-    function toggleTextarea(id) {
-      document.getElementById(id).classList.toggle("collapsed");
-    }
+  function toggleTextarea(id) {
+    document.getElementById(id).classList.toggle("collapsed");
+  }
 
-    function toggleCodeCollapse() {
+ function toggleCodeCollapse() {
       if (!isCodeCollapsed) {
         originalHTML = htmlEditor.value;
         htmlEditor.value = originalHTML.replace(
@@ -301,61 +295,44 @@ ${originalHTML}
       }
     }
 
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("darkMode",
-        document.body.classList.contains("dark"));
-    }
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+  }
 
-    function clearEditors() {
-      if (!confirm("This will clear both HTML and CSS. Continue?")) return;
-      htmlEditor.value = "";
-      cssEditor.value = "";
-      originalHTML = "";
-      isCodeCollapsed = false;
-      renderPreview();
-    }
-
-    async function exportZip() {
-      const zip = new JSZip();
-      zip.file(
-        "index.html",
-`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Exported Project</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-${originalHTML}
-</body>
-</html>`
-      );
-      zip.file("styles.css", cssEditor.value);
-      const blob = await zip.generateAsync({ type: "blob" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "html-css-project.zip";
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    if (localStorage.getItem("darkMode") === "true") {
-      document.body.classList.add("dark");
-    }
-
-    htmlEditor.addEventListener("input", () => {
-      if (!isCodeCollapsed) originalHTML = htmlEditor.value;
-      renderPreview();
-    });
-
-    cssEditor.addEventListener("input", renderPreview);
-
+  function clearEditors() {
+    if (!confirm("Clear HTML & CSS?")) return;
+    htmlEditor.value = "";
+    cssEditor.value = "";
+    originalHTML = "";
     renderPreview();
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
-  </script>
+  }
+
+  async function exportZip() {
+    const zip = new JSZip();
+    zip.file("index.html", originalHTML);
+    zip.file("styles.css", cssEditor.value);
+    const blob = await zip.generateAsync({ type: "blob" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "project.zip";
+    a.click();
+  }
+
+  htmlEditor.addEventListener("input", () => {
+    if (!isCodeCollapsed) originalHTML = htmlEditor.value;
+    renderPreview();
+  });
+
+  cssEditor.addEventListener("input", renderPreview);
+
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
+
+  renderPreview();
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 
 </body>
 </html>
